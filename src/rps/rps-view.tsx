@@ -1,6 +1,5 @@
 import { Button, ButtonClickEvent, ButtonProps, useInstance } from "reacord"
 import React from "react"
-import { setTimeout } from "timers/promises"
 import { mention } from "../helpers/mention"
 import { Choice, choiceEmoji, choices } from "./choice.js"
 import { getWinner } from "./get-winner.js"
@@ -34,31 +33,32 @@ export function RpsView({
     }
   })
 
-  function handleAccept(event: ButtonClickEvent) {
-    if (event.user.id === player2.id) {
-      setState({
-        type: "game",
-        player1Choice: undefined,
-        player2Choice: undefined,
-      })
-    } else {
+  function requireChallengedPlayer(
+    callback: (event: ButtonClickEvent) => void,
+  ) {
+    return (event: ButtonClickEvent) => {
+      if (event.user.id === player2.id) return callback(event)
       event
         .ephemeralReply(`Only the challenged player can click this.`)
         .deactivate()
     }
   }
 
-  async function handleDeny(event: ButtonClickEvent) {
-    if (event.user.id === player2.id) {
-      setState({ type: "denied" })
-      await setTimeout(1000) // workaround for reacord bug
-      instance.deactivate()
-    } else {
-      event
-        .ephemeralReply(`Only the challenged player can click this.`)
-        .deactivate()
-    }
-  }
+  const handleAccept = requireChallengedPlayer(() => {
+    setState({
+      type: "game",
+      player1Choice: undefined,
+      player2Choice: undefined,
+    })
+  })
+
+  const handleDeny = requireChallengedPlayer(() => {
+    setState({ type: "denied" })
+
+    // workaround for reacord bug
+    // weird stuff happens without this timeout
+    setTimeout(() => instance.deactivate(), 1000)
+  })
 
   function choiceButtonProps(label: string, choice: Choice): ButtonProps {
     return {
