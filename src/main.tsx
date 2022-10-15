@@ -1,26 +1,30 @@
-import { Client, Intents } from "discord.js"
+import {
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+  Client,
+} from "discord.js"
 import "dotenv/config.js"
 import { ReacordDiscordJs } from "reacord"
 import React from "react"
 import { RollResultView } from "./dice/roll-result.js"
-import { useCommands } from "./helpers/commands.js"
+import { usingCommands } from "./helpers/commands.js"
 import { Logger } from "./helpers/logger.js"
 import { RpsView } from "./rps/rps-view.js"
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
+const client = new Client({ intents: ["Guilds"] })
 const reacord = new ReacordDiscordJs(client)
 const logger = new Logger("[bae]")
 
-useCommands(client, [
+usingCommands(client, [
   {
-    type: "CHAT_INPUT",
+    type: ApplicationCommandType.ChatInput,
     name: "roll",
     description: "rolls a dice",
     options: [
       {
         name: "dice",
         description: "dice to roll",
-        type: "STRING",
+        type: ApplicationCommandOptionType.String,
         required: true,
       },
     ],
@@ -36,7 +40,7 @@ useCommands(client, [
     },
   },
   {
-    type: "USER",
+    type: ApplicationCommandType.User,
     name: "Rock, Paper, Scissors",
     run(interaction) {
       const challenger = interaction.user

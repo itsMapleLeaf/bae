@@ -2,7 +2,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently 'pnpm build -- --watch' 'wait-on file:dist/main.js && nodemon dist/main.js'",
+    "dev": "run-p --race dev:*",
+    "dev:build": "pnpm build -- --watch",
+    "dev:run": "wait-on file:dist/main.js && nodemon dist/main.js",
     "build": "tsup-node src/main.tsx --format=esm --target=node16 --clean --sourcemap",
     "start": "node --enable-source-maps dist/main.js",
     "typecheck": "tsc --noEmit",
@@ -13,7 +15,6 @@
   },
   "dependencies": {
     "@itsmapleleaf/configs": "^1.1.5",
-    "@itsmapleleaf/gatekeeper": "^0.9.1",
     "chalk": "^5.1.2",
     "discord.js": "^14.6.0",
     "dotenv": "^16.0.3",
@@ -23,20 +24,16 @@
     "zod": "^3.19.1"
   },
   "devDependencies": {
+    "@rushstack/eslint-patch": "^1.2.0",
+    "@types/eslint": "^8.4.6",
     "@types/node": "^18.11.0",
+    "@types/react": "^18.0.21",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
-    "concurrently": "^7.4.0",
     "depcheck": "^1.4.3",
     "eslint": "^8.25.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-import-resolver-typescript": "^3.5.1",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jsx-a11y": "^6.6.1",
-    "eslint-plugin-react": "^7.31.10",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-unicorn": "^44.0.2",
     "nodemon": "^2.0.20",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.7.1",
     "tsup": "^6.2.3",
     "type-fest": "^3.1.0",
@@ -47,16 +44,7 @@
     "esbuild": "latest"
   },
   "engines": {
-    "node": "^16 || ^17"
+    "node": "^16"
   },
-  "prettier": "@itsmapleleaf/configs/prettier",
-  "eslintConfig": {
-    "extends": [
-      "./node_modules/@itsmapleleaf/configs/eslint"
-    ],
-    "ignorePatterns": [
-      "**/node_modules/**",
-      "**/dist/**"
-    ]
-  }
+  "prettier": "@itsmapleleaf/configs/prettier"
 }
